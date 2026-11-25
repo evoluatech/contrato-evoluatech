@@ -1,0 +1,29 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Somente o e-mail do dono, autenticado e verificado, acessa os dados.
+    // Troque pelo e-mail que você usará para entrar no sistema.
+    function isOwner() {
+      return request.auth != null
+        && request.auth.token.email == "evoluatechbr@gmail.com"
+        && request.auth.token.email_verified == true;
+    }
+
+    match /contratos/{numero} {
+      allow read: if isOwner();
+      allow create, update: if isOwner()
+        && request.resource.data.numero == numero
+        && request.resource.data.status in ["rascunho", "gerado", "enviado", "assinado", "cancelado"];
+      allow delete: if false; // contratos não são apagados pelo sistema
+    }
+
+    match /contadores/{id} {
+      allow read, create, update: if isOwner();
+      allow delete: if false;
+    }
+
+    // Qualquer outro caminho é negado.
+  }
+}

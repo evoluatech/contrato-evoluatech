@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EVOLUATECH | Contratos Digitais</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">EVOLUA<b>TECH</b></span>
+    <span class="tag">Contratos digitais</span>
+  </div>
+  <nav class="tabs">
+    <button class="tab active" data-view="painel">Painel de preenchimento</button>
+    <button class="tab" data-view="visualizacao">Visualização</button>
+  </nav>
+  <div class="actions">
+    <button id="btnLogin" class="btn">Entrar com Google</button>
+    <button id="btnNovo" class="btn">Novo contrato</button>
+    <button id="btnRascunho" class="btn" disabled title="Entre para salvar na nuvem">Salvar na nuvem</button>
+    <button id="btnVisualizar" class="btn">Visualizar</button>
+    <button id="btnPdf" class="btn primary">Gerar PDF</button>
+    <button id="btnAssinatura" class="btn" disabled title="Aguardando integração com Clicksign ou D4Sign">Enviar para assinatura</button>
+  </div>
+</header>
+
+<main>
+
+  <!-- ===================== PAINEL DE PREENCHIMENTO ===================== -->
+  <section id="painel" class="view active">
+
+    <div class="notice">
+      Minuta para revisão interna. Os textos são padrões editáveis e não representam validação jurídica.
+      Revisão profissional é recomendada antes do envio ao cliente. Os contratos são salvos na nuvem (Firebase) após o login com Google. O último contrato em edição também fica salvo neste navegador, para não perder dados.
+    </div>
+
+    <div class="draft-row">
+      <select id="selRascunho" aria-label="Rascunhos salvos">
+        <option value="">Editar contrato existente…</option>
+      </select>
+    </div>
+
+    <div id="statusSalvo" class="hint status" role="status"></div>
+
+    <form id="form" novalidate autocomplete="off">
+
+      <fieldset>
+        <legend><span>1</span>Contratada — EVOLUATECH</legend>
+        <div class="grid">
+          <label>Nome empresarial ou responsável<input name="c_nome" required></label>
+          <label>CPF/CNPJ<input name="c_doc"></label>
+          <label class="full">Endereço<input name="c_endereco"></label>
+          <label>E-mail<input type="email" name="c_email"></label>
+          <label>Telefone<input type="tel" name="c_telefone"></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend><span>2</span>Contratante — Cliente</legend>
+        <div class="grid">
+          <label>Nome completo ou razão social<input name="k_nome" required></label>
+          <label>CPF/CNPJ<input name="k_doc"></label>
+          <label class="full">Endereço<input name="k_endereco"></label>
+          <label>E-mail<input type="email" name="k_email"></label>
+          <label>Telefone<input type="tel" name="k_telefone"></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend><span>3</span>Dados do contrato</legend>
+        <div class="grid">
+          <label>Número do contrato<input name="numero" readonly></label>
+          <label>Data da contratação<input type="date" name="data_contratacao"></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend><span>4</span>Serviços e escopo</legend>
+        <div class="checks full">
+          <label class="check"><input type="checkbox" data-group="servicos" value="site"> Desenvolvimento de sites</label>
+          <label class="check"><input type="checkbox" data-group="servicos" value="sistema"> Desenvolvimento de sistemas</label>
+          <label class="check"><input type="checkbox" data-group="servicos" value="app"> Desenvolvimento de aplicativos</label>
+          <label class="check"><input type="checkbox" data-group="servicos" value="automacao"> Automações e integrações</label>
+          <label class="check"><input type="checkbox" data-group="servicos" value="outros"> Outros serviços tecnológicos</label>
+        </div>
+        <div class="grid" style="margin-top:14px">
+          <label class="full">Nome do projeto<input name="projeto_nome" required></label>
+          <label class="full">Descrição detalhada<textarea name="descricao"></textarea></label>
+          <label class="full">Funcionalidades contratadas<textarea name="funcionalidades"></textarea></label>
+          <label class="full">Tecnologias utilizadas (opcional)<textarea name="tecnologias"></textarea></label>
+          <label class="full">Entregáveis<textarea name="entregaveis"></textarea></label>
+          <label class="full">Serviços não inclusos<textarea name="nao_inclusos"></textarea></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend><span>5</span>Valores e condições de pagamento</legend>
+        <div class="grid">
+          <label>Valor total do projeto (R$)<input type="number" step="0.01" min="0" name="valor_total" required></label>
+          <label>Percentual de entrada (%)<input type="number" step="1" min="0" max="100" name="entrada_pct"></label>
+          <label>Número de parcelas do saldo<input type="number" step="1" min="1" name="parcelas"></label>
+          <label>Forma de pagamento
+            <select name="forma_pagamento">
+              <option value="">Selecione</option>
+              <option>Pix</option>
+              <option>Boleto</option>
+              <option>Transferência bancária</option>
+              <option>Cartão de crédito</option>
+              <option>Outra</option>
+            </select>
+          </label>
+          <label>Vencimento da entrada<input type="date" name="vencimento_entrada"></label>
+          <label>Vencimento do saldo / primeira parcela<input type="date" name="vencimento_saldo"></label>
+          <label class="full">Condições especiais<textarea name="condicoes_especiais"></textarea></label>
+          <div id="resumo" class="resumo full"></div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend><span>6</span>Plano mensal de suporte e manutenção (opcional)</legend>
+        <p class="hint">A contratação é opcional. Hospedagem, domínio e serviços de terceiros são cobrados à parte.</p>
+        <div class="checks" style="margin-bottom:14px">
+          <span class="hint" style="margin:0;font-weight:600">Categorias cobertas:</span>
+          <label class="check"><input type="checkbox" data-group="categorias" value="site"> Sites e plataformas web</label>
+          <label class="check"><input type="checkbox" data-group="categorias" value="app"> Aplicativos</label>
+          <label class="check"><input type="checkbox" data-group="categorias" value="sistema"> Sistemas</label>
+        </div>
+        <div class="plans">
+          <div class="plan">
+            <h4><label class="check"><input type="radio" name="plano" value="basico"> Básico</label></h4>
+            <label>Valor mensal (R$)<input type="number" step="0.01" min="0" name="plano_basico_valor"></label>
+            <label>Horas de atendimento / mês<input name="plano_basico_horas"></label>
+            <label>Limite de alterações<input name="plano_basico_limite"></label>
+            <label>Prazo de atendimento<input name="plano_basico_prazo"></label>
+            <label>Serviços incluídos<textarea name="plano_basico_servicos"></textarea></label>
+          </div>
+          <div class="plan">
+            <h4><label class="check"><input type="radio" name="plano" value="profissional"> Profissional</label></h4>
+            <label>Valor mensal (R$)<input type="number" step="0.01" min="0" name="plano_profissional_valor"></label>
+            <label>Horas de atendimento / mês<input name="plano_profissional_horas"></label>
+            <label>Limite de alterações<input name="plano_profissional_limite"></label>
+            <label>Prazo de atendimento<input name="plano_profissional_prazo"></label>
+            <label>Serviços incluídos<textarea name="plano_profissional_servicos"></textarea></label>
+          </div>
+          <div class="plan">
+            <h4><label class="check"><input type="radio" name="plano" value="premium"> Premium</label></h4>
+            <label>Valor mensal (R$)<input type="number" step="0.01" min="0" name="plano_premium_valor"></label>
+            <label>Horas de atendimento / mês<input name="plano_premium_horas"></label>
+            <label>Limite de alterações<input name="plano_premium_limite"></label>
+            <label>Prazo de atendimento<input name="plano_premium_prazo"></label>
+            <label>Serviços incluídos<textarea name="plano_premium_servicos"></textarea></label>
+          </div>
+        </div>
+        <label class="check" style="margin-top:14px"><input type="checkbox" name="plano_ativo"> Incluir plano mensal neste contrato</label>
+      </fieldset>
+
+      <fieldset>
+        <legend><span>7</span>Prazos e entrega</legend>
+        <div class="grid">
+          <label>Data prevista de início<input type="date" name="data_inicio"></label>
+          <label>Prazo estimado<input name="prazo_estimado"></label>
+          <label class="full">Etapas de desenvolvimento<textarea name="etapas"></textarea></label>
+          <label class="full">Condições de aprovação<textarea name="condicoes_aprovacao"></textarea></label>
+          <label class="full">Condições de entrega final<textarea name="condicoes_entrega"></textarea></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend><span>8</span>Cláusulas editáveis</legend>
+        <div class="grid">
+          <label class="full">Marketing e serviços não inclusos<textarea name="cl_marketing" rows="6"></textarea></label>
+          <label class="full">Garantia técnica de 90 dias<textarea name="cl_garantia" rows="8"></textarea></label>
+          <label class="full">Cancelamento e rescisão<textarea name="cl_cancelamento" rows="6"></textarea></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend><span>9</span>Assinatura eletrônica</legend>
+        <p class="hint">A integração com Clicksign ou D4Sign ainda não está implementada. Até lá, o contrato pode ser impresso ou gerado em PDF para assinatura manual. Uma assinatura desenhada na tela não é tratada como válida.</p>
+      </fieldset>
+
+    </form>
+  </section>
+
+  <!-- ===================== VISUALIZAÇÃO DO CONTRATO ===================== -->
+  <section id="visualizacao" class="view">
+    <div class="stage">
+      <article id="doc" class="document"></article>
+    </div>
+  </section>
+
+</main>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script type="module" src="script.js"></script>
+</body>
+</html>
