@@ -271,7 +271,7 @@ async function salvarNuvem() {
     setOcupado(true, "Gerando número…");
     try {
       d.numero = await nextNumero();
-      $("#numero").value = d.numero;
+      form.elements.numero.value = d.numero;
     } catch (e) {
       setOcupado(false);
       return toast(`Não foi possível gerar o número: ${e.message}`);
@@ -287,7 +287,12 @@ async function salvarNuvem() {
   } catch (e) {
     console.error(e);
     status("Erro ao salvar na nuvem. Os dados continuam salvos neste navegador.", "erro");
-    toast(`Erro ao salvar: ${e.code || e.message}`);
+    const msg = e.code === "permission-denied"
+      ? "Sem permissão no Firestore. Confira se as regras foram publicadas e se o e-mail do login é o dono."
+      : e.code === "failed-precondition" || e.code === "not-found"
+        ? "Banco Firestore não encontrado. Crie o banco no Console do Firebase."
+        : `Erro ao salvar: ${e.code || e.message}`;
+    toast(msg);
   } finally {
     setOcupado(false);
   }
