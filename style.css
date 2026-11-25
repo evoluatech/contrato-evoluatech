@@ -176,3 +176,10 @@ input,select,textarea{font-size:16px} /* evita zoom automático no iOS */
   table.kv td{border:0;padding:0 0 4px;font-size:10pt}
   .assina{grid-template-columns:1fr;gap:24px;margin-top:28px}
 }
+
+/* ===================== CORREÇÃO: LARGURA NO CELULAR ===================== */
+html,body{width:100%;max-width:100%;overflow-x:hidden}
+body{margin:0;background:var(--paper)}
+main,.view,.stage,fieldset,.topbar,.topbar *{max-width:100%;min-width:0}
+img,video,canvas,svg{max-width:100%;height:auto}
+.actions{max-width:100%}
