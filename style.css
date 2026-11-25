@@ -148,3 +148,9 @@ table.kv th{width:32%;color:#444;font-weight:600}
     object-fit: contain;
     display: block;
 }
+
+.brand img {
+    width: 150px;
+    height: auto;
+    object-fit: contain;
+}
