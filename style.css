@@ -133,3 +133,18 @@ table.kv th{width:32%;color:#444;font-weight:600}
 .status.aviso{color:#b45309}
 .status.erro{color:var(--red)}
 .btn:disabled{opacity:.45}
+
+/* LOGO EVOLUATECH */
+.brand {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.brand img {
+    width: 230px;
+    height: auto;
+    max-height: 65px;
+    object-fit: contain;
+    display: block;
+}
