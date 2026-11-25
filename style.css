@@ -148,3 +148,10 @@ table.kv th{width:32%;color:#444;font-weight:600}
     object-fit: contain;
     display: block;
 }
+
+.logo {
+    width: 160px;
+    height: auto;
+    object-fit: contain;
+    display: block;
+}
